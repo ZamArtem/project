@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -26,7 +27,6 @@ Read CSV with Pandas using PyScript
     <p id="csv"></p>
 
     <py-script>
-
         import pandas as pd 
 
         import sqlite3 as sql
@@ -36,7 +36,7 @@ Read CSV with Pandas using PyScript
 
         # read csv using pandas 
 
-        url_content = open_url("https://gist.githubusercontent.com/GoodmanSciences/c2dd862cd38f21b0ad36b8f96b4bf1ee/raw/1d92663004489a5b6926e944c1b3d9ec5c40900e/Periodic%2520Table%2520of%2520Elements.csv")
+        url_content = open_url("https://raw.githubusercontent.com/loczylevi/Kemiai_Elemek/main/best_period.csv")
 
         diamonds = pd.read_csv(url_content)
 
@@ -46,8 +46,21 @@ Read CSV with Pandas using PyScript
         diamonds.to_sql('diamonds', conn)
 
         # read from sql into a pandas dataframe
+        #vegyjel = "Ag"
+        
+        #df = pd.read_sql('SELECT * FROM diamonds WHERE Vegyjel =?','vegyjel', conn)
 
-        df = pd.read_sql('SELECT Element,AtomicMass FROM diamonds LIMIT 3', conn)
+        #query=" SELECT * FROM  period WHERE ev =? OR Elem =? OR Rendszam =? OR Vegyjel =? OR Felfedezo =? OR Atomtomeg =? OR Negativitas =?",(vegyjel,vegyjel,vegyjel,vegyjel,vegyjel,vegyjel,vegyjel))
+        #df=pd.read_sql(query,conn)
+        #print(my_data)
+
+        #var =  "Ag" 
+        #df = pd.read_sql('SELECT * FROM diamonds WHERE Vegyjel =' + var, conn,
+        #index_col=['Vegyjel'], parse_dates=['Vegyjel'])
+        x = "Ag"
+        query = "SELECT * FROM diamonds WHERE Vegyjel = '%s'" % x # x inside single quotes
+        df = pd.read_sql(query, conn, index_col=['Vegyjel'], parse_dates=['Vegyjel'])
+
 
         # print the output back
         
