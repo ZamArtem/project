@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>
+
+Read CSV with Pandas using PyScript
+    
+</title>
+<link rel="stylesheet" href="stilus.css">
+
+<link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+<script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+
+<!---pyodide--> 
+
+<py-env>
+    - pandas
+</py-env>
+
+</head>
+
+<body>
+    
+    <h1>Read CSV with Pandas using PyScript</h1>
+    <div class="container">
+            <form>
+                <fieldset>
+                    <legend style="margin-top: 25px">Kémiai elem kereső <i>(Alpha version)</i></legend>
+                    <hr>
+                    <legend style="margin-top: 25px">Légyszíves <strong>írj be egy vegyjelet</strong> <i>a keresőbe</i> <strong>ezután nyomd meg </strong>"Keres" gombot!</legend>
+                    <hr>
+                    <legend style="margin-top: 25px">PL: Au</legend>
+                    <br>
+                    <br>
+            
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-form-label col-form-label-lg mt-4"
+                                for="inputLarge"><strong>Keresés: írja be a vegyjelet!</strong></label>
+                                <input class="form-control form-control-lg" type="text"
+                                placeholder="írja be a vegyjelet..." id="bekeres" spellcheck="false"
+                                data-ms-editors="true">
+                            </div>
+                        </div>
+    
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="alert alert-dismissible alert-primary">
+                                <strong>Neve: </strong>
+                                <a href="#" id="kimenet" class="alert-link"></a>
+                            </div>
+                        </div>
+      <hr>
+                <div class="row">
+                    <div class="col-sm-1">
+                        <button type="button" id="run" class="btn btn-light"
+                        pys-onClick="solve">Keres</button>
+                    </div>
+                    <div class="col-sm-1">
+                        <button type="reset" class="btn btn-dark"
+                        pys-onClick="solve">Törlés</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+    </div>
+    <p id="df"></p>
+
+    <py-script>
+        import pandas as pd 
+
+        import sqlite3 as sql
+
+
+        from pyodide.http import open_url
+
+        # read csv using pandas 
+
+        url_content = open_url("https://raw.githubusercontent.com/loczylevi/Kemiai_Elemek/main/best_period.csv")
+
+        diamonds = pd.read_csv(url_content)
+
+        # create a sqllite table 
+        bekeres = Element("bekeres");
+        kimenet = Element("kimenet");
+
+        conn = sql.connect(':memory:')
+        diamonds.to_sql('diamonds', conn)
+
+        def solve(*args, **kwargs): 
+            vegyjel = str(bekeres.value)
+            vegyjel = vegyjel.lower()
+            vegyjel = vegyjel.capitalize()
+            query = "SELECT * FROM diamonds WHERE Vegyjel = '%s'" % vegyjel # x inside single quotes
+            df = pd.read_sql(query, conn)
+
+
+            # print the output back
+        
+            #csv = Element('csv')
+
+            #csv.write(df)
+
+            #print(df.shape)
+            kimenet.write(df)
+
+    </py-script>
+
+</body>
+
+</html>
